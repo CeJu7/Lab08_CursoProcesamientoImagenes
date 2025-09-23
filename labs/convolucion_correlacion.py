@@ -121,6 +121,7 @@ def remove_silence_with_map(sig, sr, frame_len=1024, stride_len=512, thr_db=-30)
     """
     energy = []
     frame_starts = []
+
     for i in range(0, len(sig) - frame_len + 1, stride_len):
         frame = sig[i:i+frame_len]
         e = 10 * np.log10(np.sum(frame**2) + 1e-12)
@@ -206,7 +207,6 @@ def read_audio_segment(file_path: str, seconds: float | None = None, start_sec: 
     """
     import soundfile as sf
 
-    # información para calcular frames
     info = sf.info(file_path)
     sr = int(info.samplerate)
     start_frame = int(start_sec * sr)
