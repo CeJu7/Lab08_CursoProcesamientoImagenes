@@ -855,27 +855,21 @@ def extract_all_features(filename, sr=22050, normalize=True, remove_silence=Fals
     all_features['sample_rate'] = sr_actual
 
     try:
-        print("  - Extrayendo características temporales...")
         temporal_features = extract_temporal_features(y_processed, sr_actual)
         all_features.update(temporal_features)
 
-        print("  - Extrayendo características de envolvente...")
         envelope_features = extract_envelope_features(y_processed, sr_actual)
         all_features.update(envelope_features)
 
-        print("  - Extrayendo características espectrales...")
         spectral_features = extract_spectral_features(y_processed, sr_actual)
         all_features.update(spectral_features)
 
-        print("  - Extrayendo características armónicas...")
         harmonic_features = extract_harmonic_features(y_processed, sr_actual)
         all_features.update(harmonic_features)
 
-        print("  - Extrayendo características MFCC...")
         mfcc_features = extract_mfcc_features(y_processed, sr_actual)
         all_features.update(mfcc_features)
 
-        print("  - Extrayendo características del espectrograma Mel...")
         mel_features = extract_mel_spectrogram_features(y_processed, sr_actual)
         all_features.update(mel_features)
 
