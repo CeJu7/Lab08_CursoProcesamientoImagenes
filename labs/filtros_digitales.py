@@ -2,11 +2,11 @@ import numpy as np
 from scipy import signal
 
 
-def design_fir_lowpass(fs, cutoff_hz, numtaps=101, window='hamming'):
+def design_fir_lowpass(fs, cutoff_hz, num_coef=101, window='hamming'):
     nyq = fs / 2.0
     if cutoff_hz <= 0 or cutoff_hz >= nyq:
         raise ValueError("cutoff_hz debe estar entre 0 y Nyquist (fs/2)")
-    h = signal.firwin(numtaps, cutoff_hz/nyq, window=window)
+    h = signal.firwin(num_coef, cutoff_hz/nyq, window=window)
     return h
 
 
@@ -47,12 +47,3 @@ def plot_response_matplotlib(axs, f, H, title=None):
     ax_phase.plot(f, np.angle(H))
     ax_phase.set_ylabel('Fase (rad)')
     ax_phase.set_xlabel('Frecuencia (Hz)')
-
-
-if __name__ == '__main__':
-    fs = 44100
-    h = design_fir_lowpass(fs, 3000, numtaps=101)
-    b, a = design_iir_butter_lowpass(fs, 3000, order=4)
-    f_fir, H_fir = freq_response_from_taps(h, 1, fs=fs)
-    f_iir, H_iir = freq_response_from_taps(b, a, fs=fs)
-    print('Módulo de filtros cargado. Coeficientes FIR:', len(h), 'IIR b len:', len(b))
