@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import signal
-from typing import Tuple, Optional, List, Union
+from typing import Tuple, Optional, Union
 
 plt.style.use(
     'seaborn-v0_8' if 'seaborn-v0_8' in plt.style.available else 'default')
@@ -21,6 +21,26 @@ class FourierSeries:
         else:
             raise NotImplementedError(
                 "Método analítico debe implementarse por señal específica")
+
+    def coeficientes_exponenciales(self,
+                                   func,
+                                   n_harmonicos: int = 10) -> Tuple[np.ndarray, np.ndarray]:
+        N = 10000
+        t = np.linspace(-self.T/2, self.T/2, N)
+        dt = self.T / N
+        y = func(t)
+
+        n_vector = np.arange(-n_harmonicos, n_harmonicos + 1)
+        cn = np.zeros(len(n_vector), dtype=complex)
+
+        for i, n in enumerate(n_vector):
+            if n == 0:
+                cn[i] = (1/self.T) * np.trapezoid(y, dx=dt)
+            else:
+                integrand = y * np.exp(-1j * n * self.omega0 * t)
+                cn[i] = (1/self.T) * np.trapezoid(integrand, dx=dt)
+
+        return n_vector, cn
 
     def _coeficientes_numericos(self, func, n_harmonicos: int) -> Tuple[float, np.ndarray, np.ndarray]:
         N = 10000
@@ -63,26 +83,6 @@ class FourierSeries:
 
         return y
 
-    def coeficientes_exponenciales(self,
-                                   func,
-                                   n_harmonicos: int = 10) -> Tuple[np.ndarray, np.ndarray]:
-        N = 10000
-        t = np.linspace(-self.T/2, self.T/2, N)
-        dt = self.T / N
-        y = func(t)
-
-        n_vector = np.arange(-n_harmonicos, n_harmonicos + 1)
-        cn = np.zeros(len(n_vector), dtype=complex)
-
-        for i, n in enumerate(n_vector):
-            if n == 0:
-                cn[i] = (1/self.T) * np.trapezoid(y, dx=dt)
-            else:
-                integrand = y * np.exp(-1j * n * self.omega0 * t)
-                cn[i] = (1/self.T) * np.trapezoid(integrand, dx=dt)
-
-        return n_vector, cn
-
 
 def onda_cuadrada(t: np.ndarray, amplitud: float = 1, duty_cycle: float = 0.5) -> np.ndarray:
     periodo = 2 * np.pi if np.max(t) > 10 else 2
@@ -102,6 +102,7 @@ def onda_diente_sierra(t: np.ndarray, amplitud: float = 1) -> np.ndarray:
 def impulso_periodico(t: np.ndarray, amplitud: float = 1, ancho: float = 0.1) -> np.ndarray:
     periodo = 2 * np.pi if np.max(t) > 10 else 2
     return amplitud * (signal.square(2 * np.pi * t / periodo, duty=ancho) > 0).astype(float)
+
 
 def calcular_potencia(coeficientes: Union[Tuple, np.ndarray], tipo: str = 'trigonometrico') -> float:
     if tipo == 'trigonometrico':
