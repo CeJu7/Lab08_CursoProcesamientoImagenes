@@ -145,7 +145,7 @@ def generar_señales_test(fs: float = 1000, duracion: float = 1.0) -> dict:
     señales = {
         'senoidal': np.sin(2 * np.pi * 50 * t),
         'multitono': np.sin(2 * np.pi * 50 * t) + 0.5 * np.sin(2 * np.pi * 120 * t),
-        'chirp': signal.chirp(t, f0=10, f1=100, t1=duracion),
+        'chirp': signal.chirp(t, f0=50, f1=150, t1=duracion),
         'ruido_blanco': np.random.randn(len(t)),
         'pulso': signal.square(2 * np.pi * 5 * t),
         'triangular': signal.sawtooth(2 * np.pi * 10 * t, width=0.5),
